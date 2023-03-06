@@ -1,53 +1,52 @@
 pipeline {
-agent any 
+    agent {
+  label 'docker'
+}
 
-   stages {
+    stages {
+        stage('Git Clone') {
+            steps {
+                    checkout scmGit(branches: [[name: 'email-notification']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/lidorg-dev/trainmefordevsecops.git']])
 
-    stage('Cloning Git') {
-
-      steps
-        {
-        /* Let's make sure we have the repository cloned to our workspace */
-       checkout scm
-        }  
-    }
-    stage('SAST'){
-      steps{
-        sh 'echo SAST stage'
-       }
-    }
-
-    
-    stage('Build-and-Tag') {
-    /* This builds the actual image; synonymous to
-         * docker build on the command line */
-      steps{    
-        sh 'echo Build and Tag'
-          }
-    }
-
-    stage('Post-to-dockerhub') {
-     steps {
-        sh 'echo post to dockerhub repo'
-     }
-    }
-
-    stage('SECURITY-IMAGE-SCANNER'){
-      steps {
-        sh 'echo scan image for security'
-     }
-    }
-
-    stage('Pull-image-server') {
-      steps {
-         sh 'echo pulling image ...'
-       }
-      }
-    
-    stage('DAST') {
-      steps  {
-         sh 'echo dast scan for security'
+                }
+        }
+        stage('SAST') {
+            steps {
+                    sh ''
+                }
+            }
+        stage('Build and Tag ') {
+            steps {
+                script {
+                     app = docker.build("lidorlg/snake:${env.BUILD_ID}")
+                }
+                }
+        }
+        stage('Image and Vulnerabilty Scan ') {
+            steps {
+                     sh ''
+                }
+        }
+        stage('Post to Docker Hub  ') {
+            steps {
+                script {
+                docker.withRegistry('https://registry.hub.docker.com','dockerhub') {
+                    app.push("${env.BUILD_ID}")
+                    }
+                }
+                }
+        }
+        stage('Pull image Server  ') {
+            steps {
+                     sh 'docker-compose down'
+                     sh 'docker-compose up'
+                
+                }
+        }
+        stage('DAAST  ') {
+            steps {
+                     sh ''
+                }
         }
     }
- }
 }
