@@ -18,7 +18,7 @@ pipeline {
         stage('Build and Tag ') {
             steps {
                 script {
-                     app = docker.build("lidorlg/snake:${env.BUILD_ID}")
+                     app = docker.build("Tuhia/snake:${env.BUILD_ID}")
                 }
                 }
         }
