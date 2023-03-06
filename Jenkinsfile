@@ -38,8 +38,8 @@ pipeline {
         }
         stage('Pull image Server  ') {
             steps {
-                     sh 'docker-compose down'
-                     sh 'docker-compose up'
+                     sh 'docker compose down'
+                     sh 'docker compose up'
                 
                 }
         }
